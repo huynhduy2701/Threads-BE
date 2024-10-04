@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import connectDB from './db/connectDB.js';
 import cookieParser from "cookie-parser"
 import userRoutes from "./routes/userRoutes.js"
+import postRoutes from "./routes/postRoutes.js";
 
 // dotenv.config(); cho phep ta su dung noi dung ben trong file .env neu khong co no se khong truy cap vao duoc  process.env.PORT
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(cookieParser());
 
 //routes
 app.use('/api/users/',userRoutes);
+app.use("/api/post/", postRoutes);
 app.listen(PORT, () => {
   console.log(`server running at http://localhost:${PORT}`);
 });

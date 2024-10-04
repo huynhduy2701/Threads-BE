@@ -2,6 +2,22 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndCookie from "../utils/helpers/generateTokenAndCookie.js";
 
+//getUserProfile
+const getUserProfile = async (req, res) => {
+  const {username} = req.params;
+  console.log(username);
+  try {
+    const user = await User.findOne({username }).select("-password").select("-updateAt");
+    if (!user) {
+       return res.status(400).json({ message: "Không tìm thấy User"});
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({message:error.message});
+    console.log("error in getUserProfile : ",error.message);
+  }
+};
 //signup user
 const signupUser = async (req, res) => {
   try {
@@ -174,4 +190,12 @@ const updateUser = async (req, res) => {
   }
 };
 
-export { signupUser, loginUser, logoutUser, followAndUnFollow, updateUser };
+
+export {
+  signupUser,
+  loginUser,
+  logoutUser,
+  followAndUnFollow,
+  updateUser,
+  getUserProfile,
+};

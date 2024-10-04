@@ -1,10 +1,11 @@
 import express from "express";
-import { followAndUnFollow, loginUser, logoutUser, signupUser, updateUser } from "../controllers/userController.js";
+import { followAndUnFollow, getUserProfile, loginUser, logoutUser, signupUser, updateUser } from "../controllers/userController.js";
 import protectRoute from "../middlewares/protectRoute.js";
 
 const router = express.Router();
 
-router.post("/signup",signupUser);
+router.post("/profile/:username",getUserProfile);
+router.post("/signup", signupUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.post("/follow/:id", protectRoute, followAndUnFollow);
