@@ -4,6 +4,7 @@ import connectDB from './db/connectDB.js';
 import cookieParser from "cookie-parser"
 import userRoutes from "./routes/userRoutes.js"
 import postRoutes from "./routes/postRoutes.js";
+import {v2 as cloudinary} from "cloudinary";
 
 // dotenv.config(); cho phep ta su dung noi dung ben trong file .env neu khong co no se khong truy cap vao duoc  process.env.PORT
 dotenv.config();
@@ -11,6 +12,12 @@ connectDB()
 const app = express();
 
 const PORT = process.env.PORT || 5000;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+})
 
 app.use(express.json()); // to parse JSON data in   the req.body
 app.use(express.urlencoded({extended :true})); // to parse form data in the req.body

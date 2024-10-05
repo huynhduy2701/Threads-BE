@@ -1,6 +1,8 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndCookie from "../utils/helpers/generateTokenAndCookie.js";
+import {v2 as cloudinary} from "cloudinary";
+
 
 //getUserProfile
 const getUserProfile = async (req, res) => {
@@ -9,12 +11,12 @@ const getUserProfile = async (req, res) => {
   try {
     const user = await User.findOne({username }).select("-password").select("-updateAt");
     if (!user) {
-       return res.status(400).json({ message: "Không tìm thấy User"});
+       return res.status(400).json({ error: "Không tìm thấy User"});
     }
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({message:error.message});
+    res.status(500).json({ error: error.message });
     console.log("error in getUserProfile : ",error.message);
   }
 };
@@ -25,12 +27,17 @@ const signupUser = async (req, res) => {
     // const user = await User.findOne({ $or: [{ email }, { username }] }); // kiem tra xem email hay username do da ton tai chua
     const isUsername = await User.findOne({ username });
     const isEmail = await User.findOne({ email });
-
+    if (!name || !email || !username || !password){
+        return res.status(400).json({ error: "Vui lòng điền đủ thông tin" });
+    }
     if (isUsername) {
-      return res.status(400).json({ message: "Username đã tồn tại" });
+      return res.status(400).json({ error: "Username đã tồn tại" });
     }
     if (isEmail) {
-      return res.status(400).json({ message: " Email đã tồn tại" });
+      return res.status(400).json({ error: " Email đã tồn tại" });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Mật khẩu phải lớn hơn 6 kí tự" });
     }
 
     //mã hóa mật khẩu
@@ -54,13 +61,15 @@ const signupUser = async (req, res) => {
         name: newUser.name,
         email: newUser.email,
         username: newUser.username,
+        bio: user.bio,
+        profilePic: user.profilePic,
         message: "Tạo tài khoản thành công !",
       });
     } else {
-      res.status(400).json({ message: "Tạo tài khoản thất bại" });
+      res.status(400).json({ error: "Tạo tài khoản thất bại" });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
     console.log("error in sigupUser : ", error.message);
   }
 };
@@ -74,12 +83,12 @@ const loginUser = async (req, res) => {
       password,
       user?.password || ""
     );
-
+   
     if (!user) {
-      return res.status(400).json({ message: "Username không tồn tại !" });
+      return res.status(400).json({ error: "Username không tồn tại !" });
     }
     if (user && !isPasswordCorrect) {
-      return res.status(400).json({ message: "Sai mật khẩu" });
+      return res.status(400).json({ error: "Sai mật khẩu" });
     }
 
     generateTokenAndCookie(user._id, res);
@@ -88,10 +97,12 @@ const loginUser = async (req, res) => {
       name: user.name,
       email: user.email,
       username: user.username,
+      bio:user.bio,
+      profilePic:user.profilePic,
       message: "Đăng nhập thành công!",
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
     console.log("Error in loginUser : ", error.message);
   }
 };
@@ -102,7 +113,7 @@ const logoutUser = (req, res) => {
     res.cookie("jwt", "", { maxAge: 1 });
     res.status(200).json({ message: " Đăng xuất thành công" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
     console.log("Error in logoutUser : ", error.message);
   }
 };
@@ -123,10 +134,10 @@ const followAndUnFollow = async (req, res) => {
       console.log("._id ", id);
       return res
         .status(400)
-        .json({ message: " Bạn không thể follow/unfollow chính bạn" });
+        .json({ error: " Bạn không thể follow/unfollow chính bạn" });
     }
     if (!userToModify || !currentUser) {
-      return res.status(400).json({ message: "Không tìm thấy user ! " });
+      return res.status(400).json({ error: "Không tìm thấy user ! " });
     }
 
     const isFollowing = currentUser.following.includes(id);
@@ -145,22 +156,25 @@ const followAndUnFollow = async (req, res) => {
       res.status(200).json({ message: " Follow người dùng thành công" });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
     console.log("Error in followAndUnFollow : ", error.message);
   }
 };
 
 //update User
 const updateUser = async (req, res) => {
-  const { name, email, username, password, profilePic, bio } = req.body;
+  const { name, email, username, password, bio } = req.body;
+  let {profilePic} = req.body;
   const userId = req.user._id;
   try {
     let user = await User.findById(userId);
     if (!user) {
-      res.status(400).json({ message: "Không tìm thấy user để cập nhật" });
+      res.status(400).json({ error: "Không tìm thấy user để cập nhật" });
     }
     if (req.params.id !== userId.toString()) {
-      return res.status(400).json({message : "Bạn không thể cập nhật user của bạn"});
+      return res
+        .status(400)
+        .json({ error: "Bạn không thể cập nhật user của bạn" });
     }
 
     if (password) {
@@ -176,6 +190,15 @@ const updateUser = async (req, res) => {
       user.password = hashedPassword;
 
     }
+
+    if (profilePic) {
+      if (user.profilePic) {
+        await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0])
+      }
+      const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+      profilePic = uploadedResponse.secure_url;
+    }
+
     user.name=name || user.name;
     user.email = email || user.email;
     user.username = username || user.username;
@@ -185,7 +208,7 @@ const updateUser = async (req, res) => {
     user = await user.save();
     res.status(200).json({message :"Cập nhật thông tin thành công" ,user})
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
     console.log("Error in updateUser : ", error.message);
   }
 };

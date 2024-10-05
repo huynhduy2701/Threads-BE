@@ -8,28 +8,36 @@ const createPost = async (req,res) =>{
         const {postedBy,text,img} = req.body;
 
         if (!postedBy || !text) {
-            return res.status(400).json({message:"Vui lòng điền đủ thông tin"});
+            return res
+              .status(400)
+              .json({ error: "Vui lòng điền đủ thông tin" });
         }
 
         const user = await User.findById(postedBy);
 
         if (!user) {
-            return res.status(404).json({ message: "Không tìm thấy user" });
+            return res.status(404).json({ error: "Không tìm thấy user" });
         }
         if(user._id.toString() !== req.user.id.toString()){
-            return res.status(401).json({ message: "Bạn không có quyền truy cập đăng bài" });
+            return res
+              .status(401)
+              .json({ error: "Bạn không có quyền truy cập đăng bài" });
         }
 
         const maxLength = 500;
         if(text.length>maxLength){
-            return res.status(400).json({message:`Nội dung bài đăng không được quá ${maxLength} ký tự`});
+            return res
+              .status(400)
+              .json({
+                error: `Nội dung bài đăng không được quá ${maxLength} ký tự`,
+              });
         }
 
         const newPost = new Post({postedBy,text,img});
         await newPost.save();
         res.status(201).json({message:"Tạo bài viết thành công",newPost});
     } catch (error) {
-        res.status(500).json({message:error.message});
+        res.status(500).json({ error: error.message });
         console.log("error in createPost :  ",error.message);
     }
 }
@@ -41,12 +49,12 @@ const getPost = async (req,res)=>{
         console.log("getPost : ",post);
 
         if (!post) {
-            return res.status(404).json({message : "Không tìm thấy bài viết"});
+            return res.status(404).json({ error: "Không tìm thấy bài viết" });
         }
 
         res.status(200).json({post});
     } catch (error) {
-        res.status(500).json({message:error.message});
+        res.status(500).json({ error: error.message });
         console.log("error in getPost :" ,error.message);
     }
 }
@@ -57,16 +65,18 @@ const deletePost = async (req,res)=>{
         const post = await Post.findById(req.params.id);
         console.log("deletePost", deletePost);
         if (!post) {
-           return res.status(404).json({message:"Không tìm thấy bài viết"});
+           return res.status(404).json({ error: "Không tìm thấy bài viết" });
         }
         if (post.postedBy.toString() !== req.user._id.toString()) {
-            return res.status(404).json({message:"Bạn không có quyền truy cập để xóa bài viết"});
+            return res
+              .status(404)
+              .json({ error: "Bạn không có quyền truy cập để xóa bài viết" });
         }
 
         await Post.findByIdAndDelete(req.params.id);
         res.status(200).json({message:"Xóa bài viết thành công"});
     } catch (error) {
-        res.status(500).json({message:error.message});
+        res.status(500).json({ error: error.message });
         console.log("error in deletePost : " ,error.message);
     }
 }
@@ -82,7 +92,7 @@ const likePost = async (req,res)=>{
       const post =await Post.findById(postId);
 
       if (!post) {
-        return res.status(404).json({ message: "Không tìm thấy bài viết" });
+        return res.status(404).json({ error: "Không tìm thấy bài viết" });
       }
       // Đây là mảng lưu trữ các ID người dùng đã thích bài viết. Sử dụng includes để kiểm tra xem userId (ID của người dùng hiện tại) có nằm trong danh sách những người đã thích bài viết hay chưa.
       const userLikedPost = post.likes.includes(userId);
@@ -100,7 +110,7 @@ const likePost = async (req,res)=>{
 
       }
     } catch (error) {
-        res.status(500).json({message:error.message});
+        res.status(500).json({ error: error.message });
         console.log("Error in likePost : ",error.message);
     }
 }
@@ -118,12 +128,12 @@ const replyPost = async(req,res) =>{
       if (!text) {
         return res
           .status(400)
-          .json({ message: "Vui lòng nhập nội dung để trả lời bài viết" });
+          .json({ error: "Vui lòng nhập nội dung để trả lời bài viết" });
       }
 
       const post = await Post.findById(postId);
       if (!post) {
-        return res.status(404).json({ message: "Không tìm thấy bài viết" });
+        return res.status(404).json({ error: "Không tìm thấy bài viết" });
       }
 
       const reply = { userId, text, userProfilePic, username };
@@ -132,7 +142,7 @@ const replyPost = async(req,res) =>{
       await post.save();
       res.status(201).json({ message: "Trả lời bài viết thành công", reply });
     } catch (error) {
-        res.status(500).json({message:error.message});
+        res.status(500).json({ error: error.message });
         console.log("error in replyPost : ",error.message);
     }
 }
@@ -143,7 +153,7 @@ const  feedPost =  async (req,res) =>{
         const userId = req.user._id;
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({message :"Không tìm thấy user"});
+            return res.status(404).json({ error: "Không tìm thấy user" });
         }
 
         const following = user.following;
@@ -153,7 +163,7 @@ const  feedPost =  async (req,res) =>{
         res.status(200).json({feedPost})
 
     } catch (error) {
-        res.status(500).json({ message:error.message});
+        res.status(500).json({ error: error.message });
         console.log("Error in feedPost : ",error.message);
     }
 }
