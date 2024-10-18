@@ -165,6 +165,7 @@ const followAndUnFollow = async (req, res) => {
 const updateUser = async (req, res) => {
   const { name, email, username, password, bio } = req.body;
   let {profilePic} = req.body;
+  console.log("profilePic in controller", profilePic);
   const userId = req.user._id;
   try {
     let user = await User.findById(userId);
