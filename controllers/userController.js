@@ -9,7 +9,7 @@ const getUserProfile = async (req, res) => {
   const {username} = req.params;
   console.log(username);
   try {
-    const user = await User.findOne({username }).select("-password").select("-updateAt");
+    const user = await User.findOne({username}).select("-password").select("-updateAt");
     if (!user) {
        return res.status(400).json({ error: "Không tìm thấy User"});
     }
@@ -173,11 +173,17 @@ const updateUser = async (req, res) => {
       res.status(400).json({ error: "Không tìm thấy user để cập nhật" });
     }
     if (req.params.id !== userId.toString()) {
+      console.log(
+        "req.params.id:",
+        req.params.id,
+        "userId.toString():",
+        userId.toString()
+      );
       return res
         .status(400)
         .json({ error: "Bạn không thể cập nhật user của bạn" });
     }
-
+    
     if (password) {
       const salt = await bcrypt.genSalt(10);
       // bcrypt.genSalt(10) được gọi để tạo ra một muối (salt) với độ dài được xác định. Tham số 10 là số "rounds" (số vòng lặp) mà bạn muốn sử dụng để tạo muối.
@@ -207,7 +213,14 @@ const updateUser = async (req, res) => {
     user.bio = bio || user.bio;
 
     user = await user.save();
+    user.password = null;
     res.status(200).json({message :"Cập nhật thông tin thành công" ,user})
+      console.log(
+        "update thanh cong req.params.id:",
+        req.params.id,
+        "userId.toString():",
+        userId.toString()
+      );
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.log("Error in updateUser : ", error.message);
