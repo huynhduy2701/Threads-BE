@@ -21,7 +21,7 @@ cloudinary.config({
 
 console.log("CLOUDINARY_CLOUD_NAME:", process.env.CLOUDINARY_CLOUD_NAME);
 
-app.use(express.json()); // to parse JSON data in   the req.body
+app.use(express.json({limit:"50mb"})); // to parse JSON data in   the req.body chúng ta giới hạn ảnh gởi lên server
 app.use(express.urlencoded({extended :true})); // to parse form data in the req.body
 app.use(cookieParser());
 

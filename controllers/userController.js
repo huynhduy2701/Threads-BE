@@ -2,14 +2,26 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndCookie from "../utils/helpers/generateTokenAndCookie.js";
 import {v2 as cloudinary} from "cloudinary";
+import mongoose from "mongoose";
+import { query } from "express";
 
 
 //getUserProfile
 const getUserProfile = async (req, res) => {
-  const {username} = req.params;
-  console.log(username);
+  const {query} = req.params;
+  console.log("query in getUserProfile:",query);
   try {
-    const user = await User.findOne({username}).select("-password").select("-updateAt");
+    let user ;
+    //truy vấn UserId;
+    if(mongoose.Types.ObjectId.isValid(query)){
+      user = await User.findOne({ _id: query })
+        .select("-password")
+        .select("-updateAt");
+    }else{
+
+       user = await User.findOne({username:query}).select("-password").select("-updateAt");
+    }
+
     if (!user) {
        return res.status(400).json({ error: "Không tìm thấy User"});
     }
