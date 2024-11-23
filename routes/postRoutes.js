@@ -9,7 +9,7 @@ route.get("/feed", protectRoute, feedPost);
 route.get("/:id", getPost);
 route.post("/create", protectRoute, createPost);
 route.delete("/:id",protectRoute, deletePost);
-route.post("/like/:id", protectRoute, likePost);
-route.post("/reply/:id", protectRoute, replyPost);
+route.put("/like/:id", protectRoute, likePost);
+route.put("/reply/:id", protectRoute, replyPost);
 
 export default route;
