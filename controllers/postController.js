@@ -70,10 +70,13 @@ const deletePost = async (req, res) => {
     }
     if (post.postedBy.toString() !== req.user._id.toString()) {
       return res
-        .status(404)
+        .status(401)
         .json({ error: "Bạn không có quyền truy cập để xóa bài viết" });
     }
-
+    if (post.img) {
+      const imgId = post.img.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(imgId);
+    }
     await Post.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Xóa bài viết thành công" });
   } catch (error) {
