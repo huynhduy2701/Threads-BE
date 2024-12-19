@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js"
-    
   },
   "type": "module",
   "dependencies": {
@@ -24,5 +23,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
-  }
+  },
+  "proxy": "https://threads-be.onrender.com"
 }

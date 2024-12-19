@@ -8,10 +8,11 @@ import {v2 as cloudinary} from "cloudinary";
 
 // dotenv.config(); cho phep ta su dung noi dung ben trong file .env neu khong co no se khong truy cap vao duoc  process.env.PORT
 dotenv.config();
-connectDB()
+connectDB();
 const app = express();
 
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
