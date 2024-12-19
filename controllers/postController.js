@@ -36,7 +36,7 @@ const createPost = async (req, res) => {
 
     const newPost = new Post({ postedBy, text, img });
     await newPost.save();
-    res.status(201).json({ message: "Tạo bài viết thành công", newPost });
+    res.status(201).json( newPost );
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.log("error in createPost :  ", error.message);
@@ -53,7 +53,7 @@ const getPost = async (req, res) => {
       return res.status(404).json({ error: "Không tìm thấy bài viết" });
     }
 
-    res.status(200).json({ post });
+    res.status(200).json( post );
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.log("error in getPost :", error.message);
@@ -142,7 +142,7 @@ const replyPost = async (req, res) => {
 
     post.replies.push(reply);
     await post.save();
-    res.status(201).json({ message: "Trả lời bài viết thành công", reply });
+    res.status(200).json(reply);
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.log("error in replyPost : ", error.message);

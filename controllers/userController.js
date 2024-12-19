@@ -4,6 +4,7 @@ import generateTokenAndCookie from "../utils/helpers/generateTokenAndCookie.js";
 import {v2 as cloudinary} from "cloudinary";
 import mongoose from "mongoose";
 import { query } from "express";
+import Post from "../models/postModel.js";
 
 
 //getUserProfile
@@ -21,10 +22,10 @@ const getUserProfile = async (req, res) => {
 
        user = await User.findOne({username:query}).select("-password").select("-updateAt");
     }
-
     if (!user) {
        return res.status(400).json({ error: "Không tìm thấy User"});
     }
+
 
     res.status(200).json(user);
   } catch (error) {
@@ -226,6 +227,17 @@ const updateUser = async (req, res) => {
 
     user = await user.save();
     user.password = null;
+    //tìm tất cả bài viết của user replies và update username và ảnh
+    await Post.updateMany(
+      { "replies.userId": userId },
+      {
+        $set: {
+          "replies.$[reply].username": user.username,
+          "replies.$[reply].userProfilePic": user.profilePic,
+        },
+      },
+      { arrayFilters: [{ "reply.userId": userId }] }
+    );
     res.status(200).json({message :"Cập nhật thông tin thành công" ,user})
       console.log(
         "update thanh cong req.params.id:",

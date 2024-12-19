@@ -3,7 +3,7 @@ const generateTokenAndCookie = (userId, res) => {
   // jwt.sign Phương thức này tạo một token dựa trên payload (ở đây là userId).
   // Payload { userId } Đây là dữ liệu mà bạn mã hóa trong JWT, tức là userId của người dùng
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: "1d", //Token sẽ hết hạn sau 1 ngày.
+    expiresIn: "1h", //Token sẽ hết hạn sau 1 ngày.
   });
   res.cookie("jwt", token, {
     httpOnly: true, // more secure ,Cookie chỉ có thể được truy cập thông qua HTTP(S), giúp ngăn ngừa tấn công XSS (cross-site scripting).
