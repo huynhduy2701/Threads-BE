@@ -7,7 +7,8 @@ const generateTokenAndCookie = (userId, res) => {
   });
   res.cookie("jwt", token, {
     httpOnly: true, // more secure ,Cookie chỉ có thể được truy cập thông qua HTTP(S), giúp ngăn ngừa tấn công XSS (cross-site scripting).
-    maxAge: 1 * 24 * 60 * 60 * 1000,
+    // maxAge: 1 * 24 * 60 * 60 * 1000,
+    maxAge: 1 * 60 * 60 * 1000, // 1 giờ
     sameSite: "strict", //Cookie sẽ không được gửi cùng với các yêu cầu chéo miền (cross-site request), giúp tăng tính bảo mật.
   });
 
