@@ -31,8 +31,8 @@ app.use('/api/users/',userRoutes);
 app.use("/api/post/", postRoutes);
 
 //test
-app.get('/', (req, res) => {
-  res.send('hello, this is my website!!');
+app.get('/login', (req, res) => {
+  res.send('login success');
 })
 
 app.listen(PORT, () => {
