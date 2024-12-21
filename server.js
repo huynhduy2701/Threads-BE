@@ -29,6 +29,12 @@ app.use(cookieParser());
 //routes
 app.use('/api/users/',userRoutes);
 app.use("/api/post/", postRoutes);
+
+//test
+app.get('/', (req, res) => {
+  res.send('hello, this is my website!!');
+})
+
 app.listen(PORT, () => {
   console.log(`server running at http://localhost:${PORT}`);
 });
