@@ -12,7 +12,7 @@ connectDB();
 const app = express();
 
 // const PORT = process.env.PORT || 5000; 
-const PORT = 10000; 
+const PORT = process.env.PORT; 
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
