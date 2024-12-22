@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser"
 import userRoutes from "./routes/userRoutes.js"
 import postRoutes from "./routes/postRoutes.js";
 import {v2 as cloudinary} from "cloudinary";
-
+import cors from "cors";
 // dotenv.config(); cho phep ta su dung noi dung ben trong file .env neu khong co no se khong truy cap vao duoc  process.env.PORT
 dotenv.config();
 connectDB();
