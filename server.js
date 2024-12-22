@@ -21,7 +21,13 @@ cloudinary.config({
 });
 
 console.log("CLOUDINARY_CLOUD_NAME:", process.env.CLOUDINARY_CLOUD_NAME);
-
+app.use(
+  cors({
+    origin: "https://threads-fe-3p1b.vercel.app", // Thay bằng URL frontend trên Vercel
+    methods: ["GET", "POST", "PUT", "DELETE"], // Các phương thức được phép
+    credentials: true, // Nếu cần gửi cookie hoặc thông tin xác thực
+  })
+);
 app.use(express.json({limit:"50mb"})); // to parse JSON data in   the req.body chúng ta giới hạn ảnh gởi lên server
 app.use(express.urlencoded({extended :true})); // to parse form data in the req.body
 app.use(cookieParser());
@@ -32,6 +38,7 @@ app.use("/api/post/", postRoutes);
 
 //test
 // app.get('/login', (req, res) => {
+
 //   res.send('login success');
 // })
 
