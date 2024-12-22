@@ -12,7 +12,7 @@ connectDB();
 const app = express();
 
 // const PORT = process.env.PORT || 5000; 
-const PORT = process.env.PORT; 
+const PORT = process.env.PORT || 10000; 
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -31,9 +31,9 @@ app.use('/api/users/',userRoutes);
 app.use("/api/post/", postRoutes);
 
 //test
-app.get('/login', (req, res) => {
-  res.send('login success');
-})
+// app.get('/login', (req, res) => {
+//   res.send('login success');
+// })
 
 app.listen(PORT, () => {
   console.log(`server running at http://localhost:${PORT}`);
