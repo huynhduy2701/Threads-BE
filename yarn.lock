@@ -50,7 +50,7 @@ array-flatten@1.1.1:
 "backend@file:.":
   version "1.0.0"
   dependencies:
-    backend "file:C:/Users/Admin/AppData/Local/Yarn/Cache/v6/npm-backend-1.0.0-08617054-40ff-4fd1-8385-179f1683b98c-1729237612105/node_modules/backend"
+    backend "file:C:/Users/Admin/AppData/Local/Yarn/Cache/v6/npm-backend-1.0.0-2368b06f-4473-41c1-91f5-0459c45caca6-1734844225403/node_modules/backend"
     bcryptjs "^2.4.3"
     cloudinary "^2.5.0"
     compression "^1.7.4"
@@ -60,6 +60,7 @@ array-flatten@1.1.1:
     jsonwebtoken "^9.0.2"
     mongoose "^8.7.0"
     multer "^1.4.5-lts.1"
+    multer-storage-cloudinary "^4.0.0"
 
 balanced-match@^1.0.0:
   version "1.0.2"
