@@ -69,13 +69,13 @@ const signupUser = async (req, res) => {
     if (newUser) {
       generateTokenAndCookie(newUser._id, res);
 
-      res.status(201).json({
+      res.status(200).json({
         _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
         username: newUser.username,
-        bio: user.bio,
-        profilePic: user.profilePic,
+        bio: newUser.bio,
+        profilePic: newUser.profilePic,
         message: "Tạo tài khoản thành công !",
       });
     } else {
@@ -106,7 +106,6 @@ const loginUser = async (req, res) => {
 
     generateTokenAndCookie(user._id, res);
     console.log("dang nhap be thanh cong");
-    res.send("hello, this is my website!!");
     res.status(200).json({
       _id: user._id,
       name: user.name,
