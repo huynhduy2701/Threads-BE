@@ -105,7 +105,7 @@ const loginUser = async (req, res) => {
     }
 
     generateTokenAndCookie(user._id, res);
-    console.log("dang nhap be thanh cong");
+    console.log("dang nhap BE thanh cong");
     res.status(200).json({
       _id: user._id,
       name: user.name,
