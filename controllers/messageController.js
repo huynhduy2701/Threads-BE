@@ -82,7 +82,7 @@ async function getConversations(req, res) {
       path: "participants",
       select: "username profilePic",
     });
-    res.status(200).json({ conversation });
+    res.status(200).json({ conversation }); // Dòng này truy vấn bộ sưu tập Conversation để tìm một tài liệu mà mảng participants chứa userId. Sau đó, nó sử dụng phương thức populate để lấy thêm thông tin về các participants, chỉ chọn các trường username và profilePic.
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
