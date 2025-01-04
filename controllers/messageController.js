@@ -1,6 +1,7 @@
 import Conversation from "../models/conversationModel.js";
 import Message from "../models/messageModel.js";
 
+//sendMessage
 async function sendMessage(req, res) {
   try {
     const { recipientId, message } = req.body;
@@ -12,7 +13,6 @@ async function sendMessage(req, res) {
       //$all: Xác nhận rằng mảng participants (các thành viên trong cuộc trò chuyện) chứa cả người gửi (senderId) và người nhận (recipientId)
     });
 
-    
     //Tạo cuộc trò chuyện mới nếu chưa có
     if (!conversation) {
       conversation = new Conversation({
@@ -50,4 +50,41 @@ async function sendMessage(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
-export { sendMessage };
+
+//getMessages
+async function getMessages(req, res) {
+  const { otherUserId } = req.params;
+  const userId = req.user._id; //ID của người dùng hiện tại (lấy từ middleware xác thực người dùng, ví dụ: JWT).
+  try {
+    const conversation = await Conversation.findOne({
+      participants: { $all: [userId, otherUserId] },
+    });
+    if (!conversation) {
+      return res.status(404).json({ error: "Không tìm thấy cuộc hội thoại" });
+    }
+    const messages = await Message.find({
+      conversationId: conversation._id,
+    }).sort({ createdAt: -1 }); //Sắp xếp tin nhắn theo thời gian tạo giảm dần.
+
+    res.status(200).json({ messages });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+//getConversations
+async function getConversations(req, res) {
+  const userId = req.user._id;
+  try {
+    const conversation = await Conversation.findOne({
+      participants: userId,
+    }).populate({
+      path: "participants",
+      select: "username profilePic",
+    });
+    res.status(200).json({ conversation });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+export { sendMessage, getMessages, getConversations };
