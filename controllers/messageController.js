@@ -76,13 +76,20 @@ async function getMessages(req, res) {
 async function getConversations(req, res) {
   const userId = req.user._id;
   try {
-    const conversation = await Conversation.findOne({
+    const conversations = await Conversation.find({
       participants: userId,
     }).populate({
       path: "participants",
       select: "username profilePic",
     });
-    res.status(200).json({ conversation }); // Dòng này truy vấn bộ sưu tập Conversation để tìm một tài liệu mà mảng participants chứa userId. Sau đó, nó sử dụng phương thức populate để lấy thêm thông tin về các participants, chỉ chọn các trường username và profilePic.
+
+    // xóa user hiện tại từ mảng người tham gia cuộc trò chuyện
+    conversations.forEach(conversation => {
+      conversation.participants = conversation.participants.filter(
+        participant => participant._id.toString() !== userId.toString()
+      )
+    });
+    res.status(200).json({ conversations }); // Dòng này truy vấn bộ sưu tập Conversation để tìm một tài liệu mà mảng participants chứa userId. Sau đó, nó sử dụng phương thức populate để lấy thêm thông tin về các participants, chỉ chọn các trường username và profilePic.
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
