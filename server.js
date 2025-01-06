@@ -4,6 +4,7 @@ import connectDB from './db/connectDB.js';
 import cookieParser from "cookie-parser"
 import userRoutes from "./routes/userRoutes.js"
 import postRoutes from "./routes/postRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
 import {v2 as cloudinary} from "cloudinary";
 import cors from "cors";
 // dotenv.config(); cho phep ta su dung noi dung ben trong file .env neu khong co no se khong truy cap vao duoc  process.env.PORT
@@ -11,7 +12,7 @@ dotenv.config();
 connectDB();
 const app = express();
 
-const PORT = process.env.PORT || 5000; 
+const PORT = process.env.PORT || 5500; 
 // const PORT = process.env.PORT; 
 
 cloudinary.config({
@@ -29,6 +30,7 @@ app.use(cookieParser());
 //routes
 app.use('/api/users/',userRoutes);
 app.use("/api/post/", postRoutes);
+app.use("/api/messages/", messageRoutes);
 
 //test
 // app.get('/login', (req, res) => {
