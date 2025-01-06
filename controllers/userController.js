@@ -101,7 +101,8 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Username không tồn tại !" });
     }
     if (user && !isPasswordCorrect) {
-      return res.status(400).json({ error: "Sai mật khẩu" });
+       res.status(400).json({ error: "Sai mật khẩu" });
+       return
     }
 
     generateTokenAndCookie(user._id, res);
