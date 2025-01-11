@@ -153,7 +153,7 @@ const replyPost = async (req, res) => {
 const feedPost = async (req, res) => {
   try {
     const userId = req.user._id;
-    console.log("userId in feed:", typeof userId);
+    console.log("userId in feed:",  userId);
     const user = await User.findById(userId);
     console.log("user in feed:", typeof user);
     if (!user) {
