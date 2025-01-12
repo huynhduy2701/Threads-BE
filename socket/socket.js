@@ -17,19 +17,25 @@ const io = new Server(server, {
   },
 });
 
-const userSocketMap = {}//userId : socketId
+// Tạo một đối tượng để lưu trữ ánh xạ giữa userId và socketId
+const userSocketMap = {}; // userId : socketId
 
 // Lắng nghe sự kiện kết nối và ghi lại ID socket khi người dùng kết nối
 io.on("connection", (socket) => {
-   console.log("'socket.io' => người dùng kết nối :", socket.id);
-   const userId = socket.handshake.query.userId;
-   if (userId !== "undefined") {
+  console.log("'socket.io' => người dùng kết nối :", socket.id);
+  // Lấy userId từ query của socket handshake
+  const userId = socket.handshake.query.userId;
+  
+  if (userId !== "undefined") {
+    // Lưu trữ ánh xạ giữa userId và socketId
     userSocketMap[userId] = socket.id;
-   }
-   io.emit("getOnlineUsers", Object.keys(userSocketMap));//[1,2,3,4,5]
-   socket.on("disconnect",()=>{
+  }
+  // Phát sự kiện getOnlineUsers với danh sách các userId đang trực tuyến
+  io.emit("getOnlineUsers", Object.keys(userSocketMap)); // [1,2,3,4,5]
+  // Lắng nghe sự kiện ngắt kết nối và xóa socketId khỏi userSocketMap
+  socket.on("disconnect", () => {
     console.log("'socket.io' => người dùng ngừng kết nối :", socket.id);
-   })
+  });
 });
 
 // Xuất các instance io, server và app để sử dụng trong các mô-đun khác
