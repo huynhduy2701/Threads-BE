@@ -7,10 +7,12 @@ import postRoutes from "./routes/postRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import {v2 as cloudinary} from "cloudinary";
 import cors from "cors";
+import {app,server} from "./socket/socket.js";
+
 // dotenv.config(); cho phep ta su dung noi dung ben trong file .env neu khong co no se khong truy cap vao duoc  process.env.PORT
 dotenv.config();
 connectDB();
-const app = express();
+// const app = express(); //sau khi có socket thì không cần khai báo này nữa 
 
 const PORT = process.env.PORT || 5500; 
 // const PORT = process.env.PORT; 
@@ -38,6 +40,10 @@ app.use("/api/messages/", messageRoutes);
 //   res.send('login success');
 // })
 
-app.listen(PORT, () => {
+// app.listen(PORT, () => {
+//   console.log(`server running at http://localhost:${PORT}`);
+// }); //cái này dùng để khi mà chưa sử dụng socket
+
+server.listen(PORT, () => {
   console.log(`server running at http://localhost:${PORT}`);
 });
