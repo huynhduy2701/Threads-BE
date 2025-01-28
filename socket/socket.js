@@ -16,6 +16,9 @@ const io = new Server(server, {
     methods: ["GET", "POST"], // Cho phép các phương thức HTTP này
   },
 });
+export const getRecipientSocketId = (recipientId) =>{
+  return userSocketMap[recipientId]; // Trả về socketId của người nhận
+}
 
 // Tạo một đối tượng để lưu trữ ánh xạ giữa userId và socketId
 const userSocketMap = {}; // userId : socketId
@@ -35,6 +38,8 @@ io.on("connection", (socket) => {
   // Lắng nghe sự kiện ngắt kết nối và xóa socketId khỏi userSocketMap
   socket.on("disconnect", () => {
     console.log("'socket.io' => người dùng ngừng kết nối :", socket.id);
+    delete userSocketMap[userId];
+    io.emit("getOnlineUsers",Object.keys(userSocketMap));
   });
 });
 

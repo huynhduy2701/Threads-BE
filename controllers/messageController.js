@@ -1,5 +1,7 @@
 import Conversation from "../models/conversationModel.js";
 import Message from "../models/messageModel.js";
+import { getRecipientSocketId } from "../socket/socket.js";
+import { io } from "../socket/socket.js";
 
 //sendMessage
 async function sendMessage(req, res) {
@@ -44,6 +46,10 @@ async function sendMessage(req, res) {
         },
       }),
     ]);
+    const recipientSocketId = getRecipientSocketId(recipientId);
+    if (recipientSocketId) {
+      io.to(recipientSocketId).emit("newMessage", newMessage); //Gửi tin nhắn mới đến người nhận
+    }
 
     res.status(201).json({ message: "goi tinh nhan thanh cong", newMessage });
   } catch (error) {
